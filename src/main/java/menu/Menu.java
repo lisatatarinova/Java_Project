@@ -1,16 +1,14 @@
-package main.java.menu;
+package menu;
 
-import main.java.domain.Automobile;
-import main.java.domain.Client;
-import main.java.menu.dbSideWork.AutoDao;
-import main.java.menu.dbSideWork.ClientDao;
-import main.java.menu.dbSideWork.WrongPassportNumberException;
+import domain.Client;
+import domain.DateCustomized;
+import menu.dbSideWork.DAO.AutoDao;
+import menu.dbSideWork.DAO.ClientDao;
+import menu.dbSideWork.Exceptions.WrongPassportNumberException;
 
 import java.sql.Date;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
 
 /** Меню
  *
@@ -19,23 +17,32 @@ import java.util.Set;
  */
 public class Menu {
     String choice;
-    int selectedMenuOption;
+    public int selectedMenuOption;
     Scanner scanner = new Scanner(System.in);
 
 
-    public Menu() throws SQLException, WrongPassportNumberException {
+    public Menu(String choice) throws SQLException, NumberFormatException {
         System.out.println("Пожалуйста, выберите действие:");
         System.out.println("1. Регистрация в системе");
         System.out.println("2. Заказ автомобиля");
-        System.out.println("Другой символ: Выход");
+        System.out.println("Другая цифра: Выход");
         System.out.print("Ваш выбор -> ");
-        this.choice = scanner.nextLine();
-        this.selectedMenuOption = Integer.parseInt(choice);
+        if(choice==null){
+            this.choice = scanner.nextLine();
+        }
+        else this.choice = choice;
+
+        try {
+            this.selectedMenuOption = Integer.parseInt(choice);
+        }catch (NumberFormatException e){
+            throw new IllegalArgumentException();
+        }
+
 
         this.selectedMenuOption();
     }
 
-    public void selectedMenuOption() throws SQLException, WrongPassportNumberException {
+    public void selectedMenuOption() throws SQLException {
         switch (selectedMenuOption){
             case 1:
                 System.out.println("Вы выбрали пункт Регистрация в системе");
@@ -44,13 +51,12 @@ public class Menu {
                 System.out.print("Введите фамилию: ");
                 String entered_LName = scanner.nextLine();
                 System.out.println("Введите дату рождения в формате ГГГГ-ММ-ДД: ");
-                //напоминалка себе
-                //надо-таки шото сделать с вводом ДР
-                System.out.println("ЛИЗА!!! ПОПРАВЬ ВВОД ДР!!! ЭТО ЖЕ ПОЗОР КАКОЙ-ТО");
-                String entered_Date = scanner.nextLine();
+                String entered_date = scanner.nextLine();
+                DateCustomized dateCustomized = new DateCustomized(entered_date);
                 System.out.print("Введите номер вашего паспорта для завершения регистрации: ");
                 String entered_passport = scanner.nextLine();
-                Client new_client = new Client(entered_FName, entered_LName, Date.valueOf(entered_Date), entered_passport);
+
+                Client new_client = new Client(entered_FName, entered_LName,dateCustomized.getOutputDate() , entered_passport);
                 new ClientDao().registerClient(new_client);
                 menuRentAuto(new_client);
                 break;
@@ -62,7 +68,7 @@ public class Menu {
 
                 Client client = new ClientDao().logInClient(id);
                 if (client == null){
-                    new Menu();
+                    new Menu(null);
                     break;
                 }
 
@@ -75,7 +81,7 @@ public class Menu {
         }
     }
 
-    public void menuRentAuto(Client client) throws SQLException, WrongPassportNumberException{
+    public void menuRentAuto(Client client) throws SQLException{
         final Client CLIENT_CONST = client;
 
         System.out.println("Выберите автомобиль из списка ниже");
@@ -86,10 +92,12 @@ public class Menu {
         int auto_ID = Integer.valueOf(entered_AutoID);
         System.out.print("Введите дату начала брони в формате ГГГГ-ММ-ДД: ");
         String entered_startDate = scanner.nextLine();
-        Date startDate = Date.valueOf(entered_startDate);
+        DateCustomized dateCustomized = new DateCustomized(entered_startDate);
+        Date startDate = dateCustomized.getOutputDate();
         System.out.print("Введите дату окончания брони в формате ГГГГ-ММ-ДД: ");
         String entered_endDate = scanner.nextLine();
-        Date endDate = Date.valueOf(entered_endDate);
+        DateCustomized dateCustomized2 = new DateCustomized(entered_endDate);
+        Date endDate =  dateCustomized2.getOutputDate();
         System.out.print("Введите номер вашего паспорта для завершения бронирования авто: ");
         String entered_passport1 = scanner.nextLine();
         autoDao.rentAuto(CLIENT_CONST,auto_ID,startDate,endDate,entered_passport1);

@@ -1,8 +1,6 @@
-package main.java.domain;
+package domain;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
-import java.time.LocalDate;
 import java.sql.Date;
 
 /** Клиент
@@ -18,13 +16,16 @@ public class Client {
     private BigDecimal rentedAutoId;
     private String passportNumber;
 
+    public Client(){
+
+    }
 
     public Client(int id, FullName fullName, Date localDate, String passportNumber) {
         this.id = id;
         this.fullName = fullName;
         this.birthDay = localDate;
         this.passportNumber = passportNumber;
-        System.out.printf("Добрый день, %s %s! \n", fullName.getFirstName(), fullName.getLastName());
+        //System.out.printf("Добрый день, %s %s! \n", fullName.getFirstName(), fullName.getLastName());
     }
 
     public Client(String fName, String lName, Date localDate, String passportNumber) {
@@ -32,7 +33,7 @@ public class Client {
         birthDay = localDate;
         this.passportNumber = passportNumber;
 
-        System.out.printf("Добро пожаловать, %s %s! \n", fullName.getFirstName(), fullName.getLastName());
+        //System.out.printf("Добро пожаловать, %s %s! \n", fullName.getFirstName(), fullName.getLastName());
     }
 
 

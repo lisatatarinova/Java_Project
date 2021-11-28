@@ -1,7 +1,5 @@
 package main.java.menu.dbSideWork;
 
-import main.java.domain.Client;
-
 import java.sql.*;
 
 public class ConnectionSource{
